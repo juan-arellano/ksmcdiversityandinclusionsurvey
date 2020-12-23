@@ -1,0 +1,12 @@
+name: KSMCDiversityAndInclusionSurvey
+title: KSMCDiversityAndInclusionSurvey
+username:
+account: juan-arellano
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3384103
+bundleId: 4022885
+url: https://juan-arellano.shinyapps.io/KSMCDiversityAndInclusionSurvey/
+when: 1608738547.93343
+asMultiple: FALSE
+asStatic: FALSE
