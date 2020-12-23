@@ -266,45 +266,61 @@ fig <- fig %>% add_annotations(xref = 'paper', yref = 'y', x = 0.14, y = y,
                             color = 'rgb(67, 67, 67)'),
                   showarrow = FALSE, align = 'right') 
 
-#fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
-     #             x = .75 * (x1), y = y,
-    #              text = paste(df[,"x1"], '%'),
-   #               font = list(family = 'Arial', size = 12,
-  #                          color = 'rgb(248, 248, 255)'),
- #                 showarrow = FALSE) 
-#fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
-     #             x = .75 * (x1 + (x2)), y = y,
-    #              text = paste(df[,"x2"], '%'),
-   #               font = list(family = 'Arial', size = 12,
-  #                            color = 'rgb(248, 248, 255)'),
- #                 showarrow = FALSE) 
-#fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
+fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
+                  #ax = .75 * (x1), ay = y,
+                  text = paste(df[,"x1"], '%'),
+                  textposition = 'left',
+                  #xanchor = 'left',
+                  font = list(family = 'Arial', size = 12,
+                  color = 'rgb(248, 248, 255)'),
+                  showarrow = FALSE)
+
+fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
+                #x = .75 * (x1 + (x2)), y = y,
+                textposition = 'center left',
+                #xanchor = 'center left',
+                 text = paste(df[,"x2"], '%'),
+                font = list(family = 'Arial', size = 12,
+                              color = 'rgb(248, 248, 255)'),
+                showarrow = FALSE)
+
+fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
      #             x = .75 * (x1 + x2 + x3), y = y,
-    #              text = paste(df[,"x3"], '%'),
-   #               font = list(family = 'Arial', size =12,
-  #                            color = 'rgb(248, 248, 255)'),
- #                 showarrow = FALSE) 
-#fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
+      textposition = 'center ',
+     #xanchor = 'left',
+     text = paste(df[,"x3"], '%'),
+                  font = list(family = 'Arial', size =12,
+                              color = 'rgb(248, 248, 255)'),
+                  showarrow = FALSE)
+
+fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
 #                  x = .75 * (x1 + x2 + x3 + x4), y = y,
-#                  text = paste(df[,"x4"], '%'),
-  #                font = list(family = 'Arial', size = 12,
- #                             color = 'rgb(248, 248, 255)'),
-#                  showarrow = FALSE) 
-#fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
- #                 x = .75 * (x1 + x2 + x3 + x4 + x5), y = y,
-#                  text = paste(df[,"x5"], '%'),
-#                  font = list(family = 'Arial', size = 12,
-#                              color = 'rgb(248, 248, 255)'),
-#                  showarrow = FALSE) 
+textposition = 'center right',
+#xanchor = 'center right',
+text = paste(df[,"x4"], '%'),
+                  font = list(family = 'Arial', size = 12,
+                              color = 'rgb(248, 248, 255)'),
+                  showarrow = FALSE)
 
-#fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
-#                  x = .75 * (x1 + x2 + x3 + x4 + x5 + x6), y = y,
-#                  text = paste(df[,"x6"], '%'),
-#                  font = list(family = 'Arial', size = 12,
-#                              color = 'rgb(248, 248, 255)'),
-#                  showarrow = FALSE) 
+fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
+                  #x = .75 * (x1 + x2 + x3 + x4 + x5), y = y,
+                  textposition = 'center right',
+                  #xanchor = 'right',
+                  text = paste(df[,"x5"], '%'),
+                  font = list(family = 'Arial', size = 12,
+                              color = 'rgb(248, 248, 255)'),
+                  showarrow = FALSE)
 
-return(fig)
+fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
+                  #x = .75 * (x1 + x2 + x3 + x4 + x5 + x6), y = y,
+                  textposition = 'right',
+                  text = paste(df[,"x6"], '%'),
+                  font = list(family = 'Arial', size = 12,
+                              color = 'rgb(248, 248, 255)'),
+                  showarrow = FALSE)
+
+fig
+#return(fig)
 }
 
 likert_plot(Q_data)
@@ -375,6 +391,7 @@ renderPlotly({
     Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
     Q_data <- as.data.frame(Q_data)
     likert_plot(Q_data)
+   
   } else if (input$race == "African American or Black") {
     Q_data <- filter(data, What.is.your.racial.or.ethnic.identity. == "African American or Black")
     Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
@@ -382,6 +399,7 @@ renderPlotly({
     Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
     Q_data <- as.data.frame(Q_data)
     likert_plot(Q_data)
+  
   } else if (input$race == "East Asian") {
     Q_data <- filter(data, What.is.your.racial.or.ethnic.identity. == "East Asian")
     Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
@@ -389,6 +407,7 @@ renderPlotly({
     Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
     Q_data <- as.data.frame(Q_data)
     likert_plot(Q_data)
+    
   } else if (input$race == "South Asian") {
     Q_data <- filter(data, What.is.your.racial.or.ethnic.identity. == "South Asian")
     Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
@@ -396,6 +415,7 @@ renderPlotly({
     Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
     Q_data <- as.data.frame(Q_data)
     likert_plot(Q_data)
+    
   } else if (input$race == "Hispanic or Latinx") {
     Q_data <- filter(data, What.is.your.racial.or.ethnic.identity. == "Hispanic or Latinx")
     Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
@@ -403,6 +423,7 @@ renderPlotly({
     Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
     Q_data <- as.data.frame(Q_data)
     likert_plot(Q_data)
+   
   } 
   
 })
@@ -433,13 +454,6 @@ age_input
 renderPlotly({
   if (input$age == "18-24"){
     Q_data <- filter(data, What.is.your.age. == "18-24")
-    Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
-    Q_data <- as.data.frame(Q_data) 
-    Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
-    Q_data <- as.data.frame(Q_data)
-    likert_plot(Q_data)
-  } else if (input$age == "25-34") {
-    Q_data <- filter(data, What.is.your.age. == "25-34")
     Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
     Q_data <- as.data.frame(Q_data) 
     Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
