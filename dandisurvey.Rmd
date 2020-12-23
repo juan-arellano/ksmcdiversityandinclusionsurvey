@@ -1,0 +1,648 @@
+---
+title: "KSMC Diversity and Inclusion Survey Results"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE, message = FALSE, warnings = FALSE}
+library(plotly)
+library(dplyr)
+library(purrr)
+library(tidyverse)
+library(data.table)
+library(tibble)
+
+
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(warning =  FALSE)
+
+data <- read.csv(file = './KSMC Diversity and Inclusion Survey.csv')
+data <- filter(data,  !is.na(Respondent.ID))
+data <- data[ -c(1:9, 11, 16) ]
+data <- data %>% 
+  rename(
+    Q1 = Please.respond.with.your.sentiment.towards.each.statement.,
+    Q2 = X.3,
+    Q3 = X.4,
+    Q4 = X.5,
+    Q5 = X.6,
+    Q6 = X.7,
+    Q7 = X.8,
+    Q8 = Please.respond.with.your.sentiment.towards.each.statement,
+    Q9 = X.9,
+    Q10 = X.10,
+    Q11  = X.11 ,
+    Q12 = X.12,
+    Q13 = X.13
+    )
+```
+
+### Race/Ethnic Identity of Survey Respondents
+
+```{r race, echo = FALSE, message = FALSE, warnings = FALSE}
+data$What.is.your.racial.or.ethnic.identity. <- ifelse(test = data$What.is.your.racial.or.ethnic.identity. != "", yes = data$What.is.your.racial.or.ethnic.identity., no = data$X.1)
+data$What.is.your.racial.or.ethnic.identity. <- ifelse(test = data$What.is.your.racial.or.ethnic.identity. != "", yes = data$What.is.your.racial.or.ethnic.identity., no = "I prefer not to disclose.")
+
+race <- data %>% count(What.is.your.racial.or.ethnic.identity.)
+
+
+fig <- plot_ly(
+  x = race$What.is.your.racial.or.ethnic.identity.,
+  y = race$n,
+  name = "Race/Ethnicity of Survey Respondents",
+  type = "bar"
+)
+
+fig
+```
+
+### Gender of Survey Respondents
+```{r gender, echo = FALSE, message = FALSE, warnings = FALSE}
+data$What.is.your.gender.identity.[data$What.is.your.gender.identity.==""]<-"I prefer not to disclose."
+
+gender <- data %>% count(What.is.your.gender.identity.)
+
+fig <- plot_ly(
+  x = gender$What.is.your.gender.identity.,
+  y = gender$n,
+  name = "Gender of Survey Respondents",
+  type = "bar"
+)
+
+fig
+```
+
+### Disability Status of Survey Respondents
+```{r disability, echo = FALSE, message = FALSE, warnings = FALSE}
+data$What.is.your.disability.status...Visible.disabilities.and.invisible.disabilities.like.diabetes.and.anxiety.included.[data$What.is.your.disability.status...Visible.disabilities.and.invisible.disabilities.like.diabetes.and.anxiety.included.==""]<-"I prefer not to disclose."
+
+disability <- data %>% count(What.is.your.disability.status...Visible.disabilities.and.invisible.disabilities.like.diabetes.and.anxiety.included.)
+
+fig <- plot_ly(
+  x = disability$What.is.your.disability.status...Visible.disabilities.and.invisible.disabilities.like.diabetes.and.anxiety.included.,
+  y = disability$n,
+  name = "Disability Status of Survey Respondents",
+  type = "bar"
+)
+
+fig
+```
+
+### Age of Survey Respondents
+```{r age, echo = FALSE, message = FALSE, warnings = FALSE}
+data$What.is.your.age.[data$What.is.your.age.==""]<-"I prefer not to disclose."
+
+age <- data %>% count(What.is.your.age.)
+
+fig <- plot_ly(
+  x = age$What.is.your.age.,
+  y = age$n,
+  name = "Age of Survey Respondents",
+  type = "bar"
+)
+
+fig
+```
+
+
+
+### Department of Survey Respondents
+```{r dept, echo = FALSE, message = FALSE, warnings = FALSE}
+data$Choose.the.department.you.are.in[data$Choose.the.department.you.are.in==""]<-"I prefer not to disclose."
+
+dept <- data %>% count(Choose.the.department.you.are.in)
+
+dept$parents <- "KSMC"
+
+labels = dept$Choose.the.department.you.are.in
+parents = dept$parents
+values = dept$n
+
+fig <- plot_ly(
+  type="treemap",
+  labels=labels,
+  parents = parents,
+  values=values)
+
+fig
+```
+
+### Did you join KSMC through a merger of acquisition?
+```{r manda, echo = FALSE, message = FALSE, warnings = FALSE}
+data$Did.you.join.KSMC.through.a.merger.or.acquisition.[data$Did.you.join.KSMC.through.a.merger.or.acquisition.==""]<-"I prefer not to disclose."
+
+manda <- data %>% count(Did.you.join.KSMC.through.a.merger.or.acquisition.)
+
+fig <- plot_ly(
+  x = manda$Did.you.join.KSMC.through.a.merger.or.acquisition.,
+  y = manda$n,
+  name = "M&A of Survey Respondents",
+  type = "bar"
+)
+
+fig
+```
+
+### When did you join KSMC?
+
+```{r time, echo = FALSE, message = FALSE, warnings = FALSE}
+data$Choose.one..I.joined.KSMC...[data$Choose.one..I.joined.KSMC...==""]<-"I prefer not to disclose."
+
+time <- data %>% count(Choose.one..I.joined.KSMC...)
+time_levels <- c( "before the move to the downtown office in April 2018.", "before the split from KSM Accounting in March 2019.", 
+                  "before the acquisition of ConnectThink in June 2019.", "before the move to remote due to COVID-19 on March 13, 2020.", 
+                  "before the acquisition of Advocate on May 26, 2020.", "after May 26, 2020.", "I prefer not to disclose." 
+)
+time$Choose.one..I.joined.KSMC... <- ordered(time$Choose.one..I.joined.KSMC..., levels = time_levels)
+time <-time[order(time$Choose.one..I.joined.KSMC...),]
+
+fig <- plot_ly(
+  x = time$Choose.one..I.joined.KSMC...,
+  y = time$n,
+  name = "time of Survey Respondents",
+  type = "scatter",
+  mode = "lines"
+)
+
+fig
+```
+    
+### Firm Wide Survey Answers
+```{r firm, echo = FALSE, message = FALSE, warnings = FALSE}
+data[data==''] <- NA
+
+Q_data <- data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+Q_data <- as.data.frame(Q_data) 
+Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+Q_data <- as.data.frame(Q_data) 
+
+likert_plot <- function(Q_data){
+Q_data <- Q_data %>%  #start with the data frame
+  map_df(table) %>%  # use map_df from the purrr package to "table" each column
+  rownames_to_column("response") %>% #convert the rownames to a column named response
+  select(response, everything(), -response)
+
+
+cols <- c(`Strongly Agree` = NA_real_, Agree = NA_real_, `Neither Agree nor Disagree` = NA_real_, Disagree = NA_real_, `Strongly Disagree` = NA_real_, `Don't Know/Not Applicable` = NA_real_)
+
+Q_data <- add_column(Q_data, !!!cols[setdiff(names(cols), names(Q_data))])
+
+Q_data <- as.data.frame(Q_data) 
+Q_data <- Q_data %>% replace(is.na(.), 0)
+
+if (ncol(Q_data) == 7){
+  Q_data$`Don't Know/Not Applicable` <- Q_data$`Don't Know/Not Applicable` + Q_data$`Don't Know / Not Applicable`
+}
+
+
+y <- c('I see strong executive leadership<br>support of diversity and inclusion.', 
+       'Our firm is committed to diversity and inclusion.',
+       'This firm provides an environment for the free and<br>open expression of ideas, opinions and beliefs.', 
+       'Management demonstrates a commitment to<br>meeting the needs of employees with disabilities', 
+       'People of all cultures and backgrounds are respected<br>and valued here. Employees of different backgrounds<br>interact well within our firm.',
+       'Racial, ethnic, and gender-based jokes<br>arent tolerated at this firm.', 
+       'I feel that who I am does not impact my<br>compensation, promotions, or job performance.',
+       'My supervisor demonstrates commitment<br>to and support of diversity.',
+       'In my department, I can be successful<br>as my authentic self.',
+       'When I speak up at work, my opinion is valued.',
+       'I rarely feel like I am singled out.',
+       'I feel like my colleagues understand who I really am.',
+       'I often worry I do not have things in common<br>with others in my department.'
+)
+
+
+x1 <- as.vector(Q_data$`Strongly Agree`)
+x2 <- as.vector(Q_data$Agree)
+x3 <- as.vector(Q_data$`Neither Agree nor Disagree`)
+x4 <- as.vector(Q_data$Disagree)
+x5 <- as.vector(Q_data$`Strongly Disagree`)
+x6 <- as.vector(Q_data$`Don't Know/Not Applicable`)
+
+df <- data.frame(y, x1, x2, x3, x4, x5, x6)
+
+df$total <- df$x1 + df$x2 + df$x3 + df$x4 + df$x5 + df$x6
+
+df$x1 <- round(((df$x1/df$total)*100), digits = 1)
+df$x2 <- round(((df$x2/df$total)*100), digits = 1)
+df$x3 <- round(((df$x3/df$total)*100), digits = 1)
+df$x4 <- round(((df$x4/df$total)*100), digits = 1)
+df$x5 <- round(((df$x5/df$total)*100), digits = 1)
+df$x6 <- round(((df$x6/df$total)*100), digits = 1)
+
+top_labels <- c('Strongly<br>agree', 'Agree', 'Neither<br>Agree<br>nor Disagree', 'Disagree', 'Strongly<br>disagree', 'Dont<br>Know or<br>Not<br>Applicable')
+
+fig <- plot_ly(df, x = ~x1, y = ~y, type = 'bar', orientation = 'h',  width = 1000, height = 450,
+        marker = list(color = 'rgba(38, 24, 74, 0.8)',
+                      line = list(color = 'rgb(248, 248, 249)', width = 1)), name = 'Strongly Agree') 
+
+fig <- fig %>% add_trace(x = ~x2, marker = list(color = 'rgba(71, 58, 131, 0.8)'), name = 'Agree') 
+fig <- fig %>% add_trace(x = ~x3, marker = list(color = 'rgba(122, 120, 168, 0.8)'), name = 'Neither Agree nor Disagree') 
+fig <- fig %>% add_trace(x = ~x4, marker = list(color = 'rgba(164, 163, 204, 0.85)'), name = 'Disagree') 
+fig <- fig %>% add_trace(x = ~x5, marker = list(color = 'rgba(190, 192, 213, 1)'), name = 'Strongly Disagree') 
+fig <- fig %>% add_trace(x = ~x6, marker = list(color = 'rgba(232, 232, 232, 1)'), name = 'Dont Know/Not Applicable') 
+fig <- fig %>% layout(legend = list(x = 100, y = 0.5))
+fig <- fig %>% layout(xaxis = list(title = "",
+                      showgrid = FALSE,
+                      showline = FALSE,
+                      showticklabels = FALSE,
+                      zeroline = FALSE,
+                      domain = c(0.15, 1)),
+         yaxis = list(title = "",
+                      showgrid = FALSE,
+                      showline = FALSE,
+                      showticklabels = FALSE,
+                      zeroline = FALSE),
+         barmode = 'stack',
+         paper_bgcolor = 'white', plot_bgcolor = 'rgb(248, 248, 255)',
+         margin = list(l = 120, r = 10, t = 25, b = 25),
+         showlegend = TRUE) 
+
+  # labeling the y-axis
+fig <- fig %>% add_annotations(xref = 'paper', yref = 'y', x = 0.14, y = y,
+                  xanchor = 'right',
+                  text = y,
+                  font = list(family = 'Arial', size = 9,
+                            color = 'rgb(67, 67, 67)'),
+                  showarrow = FALSE, align = 'right') 
+
+#fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
+     #             x = .75 * (x1), y = y,
+    #              text = paste(df[,"x1"], '%'),
+   #               font = list(family = 'Arial', size = 12,
+  #                          color = 'rgb(248, 248, 255)'),
+ #                 showarrow = FALSE) 
+#fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
+     #             x = .75 * (x1 + (x2)), y = y,
+    #              text = paste(df[,"x2"], '%'),
+   #               font = list(family = 'Arial', size = 12,
+  #                            color = 'rgb(248, 248, 255)'),
+ #                 showarrow = FALSE) 
+#fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
+     #             x = .75 * (x1 + x2 + x3), y = y,
+    #              text = paste(df[,"x3"], '%'),
+   #               font = list(family = 'Arial', size =12,
+  #                            color = 'rgb(248, 248, 255)'),
+ #                 showarrow = FALSE) 
+#fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
+#                  x = .75 * (x1 + x2 + x3 + x4), y = y,
+#                  text = paste(df[,"x4"], '%'),
+  #                font = list(family = 'Arial', size = 12,
+ #                             color = 'rgb(248, 248, 255)'),
+#                  showarrow = FALSE) 
+#fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
+ #                 x = .75 * (x1 + x2 + x3 + x4 + x5), y = y,
+#                  text = paste(df[,"x5"], '%'),
+#                  font = list(family = 'Arial', size = 12,
+#                              color = 'rgb(248, 248, 255)'),
+#                  showarrow = FALSE) 
+
+#fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
+#                  x = .75 * (x1 + x2 + x3 + x4 + x5 + x6), y = y,
+#                  text = paste(df[,"x6"], '%'),
+#                  font = list(family = 'Arial', size = 12,
+#                              color = 'rgb(248, 248, 255)'),
+#                  showarrow = FALSE) 
+
+return(fig)
+}
+
+likert_plot(Q_data)
+```
+
+### Survey Answers by Demographic Breaks
+
+```{r genderA,  echo = FALSE, message = FALSE, warnings = FALSE}
+gender_input = selectInput(inputId = "gender",
+                            label = "Gender",
+                            choices = c("Man", "Woman"),
+                            selected = "Man")
+```
+
+```{r gender2,  echo = FALSE, message = FALSE, warnings = FALSE}
+gender_input ## <-- this calls the input handlers and displays them
+```
+
+```{r gender3, echo = FALSE, message = FALSE, warnings = FALSE}
+renderPlotly({
+  if (input$gender == "Man"){
+    Q_data <- filter(data, What.is.your.gender.identity. == "Man")
+    Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+    Q_data <- as.data.frame(Q_data) 
+    Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+    Q_data <- as.data.frame(Q_data)
+    likert_plot(Q_data)
+  } else if (input$gender == "Woman") {
+    Q_data <- filter(data, What.is.your.gender.identity. == "Woman")
+    Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+    Q_data <- as.data.frame(Q_data) 
+    Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+    Q_data <- as.data.frame(Q_data)
+    likert_plot(Q_data)
+  }
+})
+```
+
+
+
+
+
+### Survey Answers by Race
+
+
+```{r raceA,  echo = FALSE, message = FALSE, warnings = FALSE}
+race_input = selectInput(inputId = "race",
+                            label = "Race and Ethnicity",
+                            choices = c("White", "African American or Black", "East Asian", "South Asian", "Hispanic or Latinx"),
+                            selected = "White")
+```
+
+
+
+```{r race2,  echo = FALSE, message = FALSE, warnings = FALSE}
+
+race_input
+```
+
+
+
+```{r race3, echo = FALSE, message = FALSE, warnings = FALSE}
+renderPlotly({
+  if (input$race == "White"){
+    Q_data <- filter(data, What.is.your.racial.or.ethnic.identity. == "White")
+    Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+    Q_data <- as.data.frame(Q_data) 
+    Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+    Q_data <- as.data.frame(Q_data)
+    likert_plot(Q_data)
+  } else if (input$race == "African American or Black") {
+    Q_data <- filter(data, What.is.your.racial.or.ethnic.identity. == "African American or Black")
+    Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+    Q_data <- as.data.frame(Q_data) 
+    Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+    Q_data <- as.data.frame(Q_data)
+    likert_plot(Q_data)
+  } else if (input$race == "East Asian") {
+    Q_data <- filter(data, What.is.your.racial.or.ethnic.identity. == "East Asian")
+    Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+    Q_data <- as.data.frame(Q_data) 
+    Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+    Q_data <- as.data.frame(Q_data)
+    likert_plot(Q_data)
+  } else if (input$race == "South Asian") {
+    Q_data <- filter(data, What.is.your.racial.or.ethnic.identity. == "South Asian")
+    Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+    Q_data <- as.data.frame(Q_data) 
+    Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+    Q_data <- as.data.frame(Q_data)
+    likert_plot(Q_data)
+  } else if (input$race == "Hispanic or Latinx") {
+    Q_data <- filter(data, What.is.your.racial.or.ethnic.identity. == "Hispanic or Latinx")
+    Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+    Q_data <- as.data.frame(Q_data) 
+    Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+    Q_data <- as.data.frame(Q_data)
+    likert_plot(Q_data)
+  } 
+  
+})
+```
+
+
+
+### Survey Answers by Age
+
+
+```{r ageA,  echo = FALSE, message = FALSE, warnings = FALSE}
+age_input = selectInput(inputId = "age",
+                            label = "Age",
+                            choices = c("18-24", "25-34", "35-44", "45-54", "55-64"),
+                            selected = "18-24")
+```
+
+
+
+```{r age2,  echo = FALSE, message = FALSE, warnings = FALSE}
+
+age_input
+```
+
+
+
+```{r age3, echo=FALSE, message=FALSE, warnings= FALSE}
+renderPlotly({
+  if (input$age == "18-24"){
+    Q_data <- filter(data, What.is.your.age. == "18-24")
+    Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+    Q_data <- as.data.frame(Q_data) 
+    Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+    Q_data <- as.data.frame(Q_data)
+    likert_plot(Q_data)
+  } else if (input$age == "25-34") {
+    Q_data <- filter(data, What.is.your.age. == "25-34")
+    Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+    Q_data <- as.data.frame(Q_data) 
+    Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+    Q_data <- as.data.frame(Q_data)
+    likert_plot(Q_data)
+  } else if (input$age == "35-44") {
+    Q_data <- filter(data, What.is.your.age. == "35-44")
+    Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+    Q_data <- as.data.frame(Q_data) 
+    Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+    Q_data <- as.data.frame(Q_data)
+    likert_plot(Q_data)
+  } else if (input$age == "45-54") {
+    Q_data <- filter(data, What.is.your.age. == "45-54")
+    Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+    Q_data <- as.data.frame(Q_data) 
+    Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+    Q_data <- as.data.frame(Q_data)
+    likert_plot(Q_data)
+  } else if (input$age == "55-64") {
+    Q_data <- filter(data, What.is.your.age. == "55-64")
+    Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+    Q_data <- as.data.frame(Q_data) 
+    Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+    Q_data <- as.data.frame(Q_data)
+    likert_plot(Q_data)
+  }
+})
+```
+
+
+
+### Survey Answers by Dept
+
+
+```{r deptA,  echo = FALSE, message = FALSE, warnings = FALSE}
+dept_input = selectInput(inputId = "dept",
+                        label = "Department",
+                        choices = c("Technology Services","Public Sector Services","Data and Development Services","Private Sector Services","Sales","Operations"),
+                        selected = "Technology Services")
+```
+
+
+
+```{r dept2,  echo = FALSE, message = FALSE, warnings = FALSE}
+
+dept_input
+```
+
+
+
+```{r dept3, echo=FALSE, message=FALSE, warnings= FALSE}
+renderPlotly({
+  if (input$dept == "Technology Services"){
+    Q_data <- filter(data, Choose.the.department.you.are.in == "Technology Services")
+    Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+    Q_data <- as.data.frame(Q_data) 
+    Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+    Q_data <- as.data.frame(Q_data)
+    likert_plot(Q_data)
+  } else if (input$dept == "Public Sector Services"){
+    Q_data <- filter(data, Choose.the.department.you.are.in == "Public Sector Services")
+    Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+    Q_data <- as.data.frame(Q_data) 
+    Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+    Q_data <- as.data.frame(Q_data)
+    likert_plot(Q_data)
+  } else if (input$dept == "Data and Development Services"){
+    Q_data <- filter(data, Choose.the.department.you.are.in == "Data and Development Services")
+    Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+    Q_data <- as.data.frame(Q_data) 
+    Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+    Q_data <- as.data.frame(Q_data)
+    likert_plot(Q_data)
+  } else if (input$dept == "Private Sector Services"){
+    Q_data <- filter(data, Choose.the.department.you.are.in == "Private Sector Services")
+    Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+    Q_data <- as.data.frame(Q_data) 
+    Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+    Q_data <- as.data.frame(Q_data)
+    likert_plot(Q_data)
+  } else if (input$dept == "Sales"){
+    Q_data <- filter(data, Choose.the.department.you.are.in == "Sales")
+    Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+    Q_data <- as.data.frame(Q_data) 
+    Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+    Q_data <- as.data.frame(Q_data)
+    likert_plot(Q_data)
+  } else if (input$dept == "Operations"){
+    Q_data <- filter(data, Choose.the.department.you.are.in == "Operations")
+    Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+    Q_data <- as.data.frame(Q_data) 
+    Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+    Q_data <- as.data.frame(Q_data)
+    likert_plot(Q_data)
+  }
+})
+```
+
+
+
+### Survey Answers by Time
+
+
+```{r timeA,  echo = FALSE, message = FALSE, warnings = FALSE}
+time_input = selectInput(inputId = "time",
+                        label = "When someone joined KSMC",
+                        choices = c("before the move to the downtown office in April 2018.", "before the split from KSM Accounting in March 2019.", 
+                        "before the acquisition of ConnectThink in June 2019.", "before the move to remote due to COVID-19 on March 13, 2020.", 
+                        "before the acquisition of Advocate on May 26, 2020.", "after May 26, 2020."),
+                        selected = "before the move to the downtown office in April 2018.")
+```
+
+
+
+```{r time2,  echo = FALSE, message = FALSE, warnings = FALSE}
+
+time_input
+```
+
+
+
+```{r time3, echo=FALSE, message=FALSE, warnings= FALSE}
+renderPlotly({
+  if (input$time == "before the move to the downtown office in April 2018."){
+    Q_data <- filter(data, Choose.one..I.joined.KSMC... == "before the move to the downtown office in April 2018.")
+    Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+    Q_data <- as.data.frame(Q_data) 
+    Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+    Q_data <- as.data.frame(Q_data)
+    likert_plot(Q_data)
+  } else if (input$time == "before the split from KSM Accounting in March 2019."){
+    Q_data <- filter(data, Choose.one..I.joined.KSMC... == "before the split from KSM Accounting in March 2019.")
+    Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+    Q_data <- as.data.frame(Q_data) 
+    Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+    Q_data <- as.data.frame(Q_data)
+    likert_plot(Q_data)
+  } else if (input$time ==  "before the acquisition of ConnectThink in June 2019."){
+    Q_data <- filter(data, Choose.one..I.joined.KSMC... == "before the acquisition of ConnectThink in June 2019.")
+    Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+    Q_data <- as.data.frame(Q_data) 
+    Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+    Q_data <- as.data.frame(Q_data)
+    likert_plot(Q_data)
+  } else if (input$time == "before the move to remote due to COVID-19 on March 13, 2020."){
+    Q_data <- filter(data, Choose.one..I.joined.KSMC... == "before the move to remote due to COVID-19 on March 13, 2020.")
+    Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+    Q_data <- as.data.frame(Q_data) 
+    Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+    Q_data <- as.data.frame(Q_data)
+    likert_plot(Q_data)
+  } else if (input$time == "before the move to remote due to COVID-19 on March 13, 2020."){
+    Q_data <- filter(data, Choose.one..I.joined.KSMC... == "before the move to remote due to COVID-19 on March 13, 2020.")
+    Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+    Q_data <- as.data.frame(Q_data) 
+    Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+    Q_data <- as.data.frame(Q_data)
+    likert_plot(Q_data)
+  } else if (input$time == "before the acquisition of Advocate on May 26, 2020."){
+    Q_data <- filter(data, Choose.one..I.joined.KSMC... == "before the acquisition of Advocate on May 26, 2020.")
+    Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+    Q_data <- as.data.frame(Q_data) 
+    Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+    Q_data <- as.data.frame(Q_data)
+    likert_plot(Q_data)
+  } else if (input$time == "after May 26, 2020."){
+    Q_data <- filter(data, Choose.one..I.joined.KSMC... == "after May 26, 2020.")
+    Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+    Q_data <- as.data.frame(Q_data) 
+    Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+    Q_data <- as.data.frame(Q_data)
+    likert_plot(Q_data)
+  }
+})
+```
+
+
+
+
+
+
+### Word Cloud of Groups and Initiatives Mentioned by KSMCers
+
+### Word Cloud of Groups and Initiatives Mentioned by KSMCers
+
+
+
+
+```{r, echo=FALSE, message=FALSE, warnings= FALSE}
+library(wordcloud2)
+ 
+#Create a list of words (Random words concerning my work)
+words <- c("Purdue Polytechnic High School","Peace Learning Center", "Data Bias Education", "Girls Inc. Indy", "Goodwill of Central and Southern Indiana",
+       "Pride Month", "Black Lives Matter", "The Greenberg Group", "Code Black Indy", "Indiana Black Expo", "Indiana Women and Technology", "Girls Who Code",
+       "Soul Focused Group", "Innopower")
+
+freq <- c(1, 1, 1, 2, 1, 4, 1, 1, 3, 1, 1, 1, 1, 1)
+
+wordclouddata<- data.frame(words, freq)
+
+# Basic plot
+wordcloud2(data=wordclouddata, size=0.4)
+```
+
+
