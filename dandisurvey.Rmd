@@ -325,7 +325,7 @@ fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
                   x = x1 + x2 + x3 + x4 + x5 + x6 / 2, y = y,
                   text = paste(df[,"x6"], '%'),
                   font = list(family = 'Arial', size = 10,
-                              color = 'rgb(248, 248, 255)'),
+                              color = 'rgb(0, 0, 0)'),
                   showarrow = FALSE)
 }
 
@@ -464,6 +464,13 @@ age_input
 renderPlotly({
   if (input$age == "18-24"){
     Q_data <- filter(data, What.is.your.age. == "18-24")
+    Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+    Q_data <- as.data.frame(Q_data) 
+    Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+    Q_data <- as.data.frame(Q_data)
+    likert_plot(Q_data)
+  } else if (input$age == "25-34") {
+    Q_data <- filter(data, What.is.your.age. == "25-34")
     Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
     Q_data <- as.data.frame(Q_data) 
     Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
