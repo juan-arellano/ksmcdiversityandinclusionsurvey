@@ -336,6 +336,665 @@ fig
 likert_plot(Q_data)
 ```
 
+
+### Firm Wide Survey Answers Weighted by Gender
+
+
+```{r firm-gender, echo = FALSE, message = FALSE, warnings = FALSE}
+
+# Filter by Man
+Q_data <- filter(data, What.is.your.gender.identity. == "Man")
+Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+Q_data <- as.data.frame(Q_data) 
+Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+Q_data <- as.data.frame(Q_data) 
+
+Q_data <- Q_data %>%  #start with the data frame
+  map_df(table) %>%  # use map_df from the purrr package to "table" each column
+  rownames_to_column("response") %>% #convert the rownames to a column named response
+  select(response, everything(), -response)
+
+
+cols <- c(`Strongly Agree` = NA_real_, Agree = NA_real_, `Neither Agree nor Disagree` = NA_real_, Disagree = NA_real_, `Strongly Disagree` = NA_real_, `Don't Know/Not Applicable` = NA_real_)
+
+Q_data <- add_column(Q_data, !!!cols[setdiff(names(cols), names(Q_data))])
+
+Q_data <- as.data.frame(Q_data) 
+Q_data <- Q_data %>% replace(is.na(.), 0)
+
+if (ncol(Q_data) == 7){
+  Q_data$`Don't Know/Not Applicable` <- Q_data$`Don't Know/Not Applicable` + Q_data$`Don't Know / Not Applicable`
+}
+
+
+y <- c('I see strong executive leadership<br>support of diversity and inclusion.', 
+       'Our firm is committed to diversity and inclusion.',
+       'This firm provides an environment for the free and<br>open expression of ideas, opinions and beliefs.', 
+       'Management demonstrates a commitment to<br>meeting the needs of employees with disabilities', 
+       'People of all cultures and backgrounds are respected<br>and valued here. Employees of different backgrounds<br>interact well within our firm.',
+       'Racial, ethnic, and gender-based jokes<br>arent tolerated at this firm.', 
+       'I feel that who I am does not impact my<br>compensation, promotions, or job performance.',
+       'My supervisor demonstrates commitment<br>to and support of diversity.',
+       'In my department, I can be successful<br>as my authentic self.',
+       'When I speak up at work, my opinion is valued.',
+       'I rarely feel like I am singled out.',
+       'I feel like my colleagues understand who I really am.',
+       'I often worry I do not have things in common<br>with others in my department.'
+)
+
+
+x1 <- as.vector(Q_data$`Strongly Agree`)
+x2 <- as.vector(Q_data$Agree)
+x3 <- as.vector(Q_data$`Neither Agree nor Disagree`)
+x4 <- as.vector(Q_data$Disagree)
+x5 <- as.vector(Q_data$`Strongly Disagree`)
+x6 <- as.vector(Q_data$`Don't Know/Not Applicable`)
+
+df <- data.frame(y, x1, x2, x3, x4, x5, x6)
+
+df$total <- df$x1 + df$x2 + df$x3 + df$x4 + df$x5 + df$x6
+
+df$x1 <- round(((df$x1/df$total)*100), digits = 1)
+df$x2 <- round(((df$x2/df$total)*100), digits = 1)
+df$x3 <- round(((df$x3/df$total)*100), digits = 1)
+df$x4 <- round(((df$x4/df$total)*100), digits = 1)
+df$x5 <- round(((df$x5/df$total)*100), digits = 1)
+df$x6 <- round(((df$x6/df$total)*100), digits = 1)
+
+x1 <- df$x1
+x2 <- df$x2
+x3 <- df$x3
+x4 <- df$x4
+x5 <- df$x5
+x6 <- df$x6
+
+# Filter by woman
+Q_data <- filter(data, What.is.your.gender.identity. == "Woman")
+Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+Q_data <- as.data.frame(Q_data) 
+Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+Q_data <- as.data.frame(Q_data) 
+
+Q_data <- Q_data %>%  #start with the data frame
+  map_df(table) %>%  # use map_df from the purrr package to "table" each column
+  rownames_to_column("response") %>% #convert the rownames to a column named response
+  select(response, everything(), -response)
+
+
+cols <- c(`Strongly Agree` = NA_real_, Agree = NA_real_, `Neither Agree nor Disagree` = NA_real_, Disagree = NA_real_, `Strongly Disagree` = NA_real_, `Don't Know/Not Applicable` = NA_real_)
+
+Q_data <- add_column(Q_data, !!!cols[setdiff(names(cols), names(Q_data))])
+
+Q_data <- as.data.frame(Q_data) 
+Q_data <- Q_data %>% replace(is.na(.), 0)
+
+if (ncol(Q_data) == 7){
+  Q_data$`Don't Know/Not Applicable` <- Q_data$`Don't Know/Not Applicable` + Q_data$`Don't Know / Not Applicable`
+}
+
+x11 <- as.vector(Q_data$`Strongly Agree`)
+x22 <- as.vector(Q_data$Agree)
+x33 <- as.vector(Q_data$`Neither Agree nor Disagree`)
+x44 <- as.vector(Q_data$Disagree)
+x55 <- as.vector(Q_data$`Strongly Disagree`)
+x66 <- as.vector(Q_data$`Don't Know/Not Applicable`)
+
+df1 <- data.frame(y, x11, x22, x33, x44, x55, x66)
+
+df1$total <- df1$x11 + df1$x22 + df1$x33 + df1$x44 + df1$x55 + df1$x66
+
+df1$x11 <- round(((df1$x11/df1$total)*100), digits = 1)
+df1$x22 <- round(((df1$x22/df1$total)*100), digits = 1)
+df1$x33 <- round(((df1$x33/df1$total)*100), digits = 1)
+df1$x44 <- round(((df1$x44/df1$total)*100), digits = 1)
+df1$x55 <- round(((df1$x55/df1$total)*100), digits = 1)
+df1$x66 <- round(((df1$x66/df1$total)*100), digits = 1)
+
+x11 <- df1$x11
+x22 <- df1$x22
+x33 <- df1$x33
+x44 <- df1$x44
+x55 <- df1$x55
+x66 <- df1$x66
+
+# Add Woman and Man percentages and then divide by 2 
+df$x1 <- (df$x1 + df1$x11) / 2
+df$x2 <- (df$x2 + df1$x22) / 2
+df$x3 <- (df$x3 + df1$x33) / 2
+df$x4 <- (df$x4 + df1$x44) / 2
+df$x5 <- (df$x5 + df1$x55) / 2
+df$x6 <- (df$x6 + df1$x66) / 2
+
+x1 <- (x1 + x11) / 2
+x2 <- (x2 + x22) / 2
+x3 <- (x3 + x33) / 2
+x4 <- (x4 + x44) / 2
+x5 <- (x5 + x55) / 2
+x6 <- (x6 + x66) / 2
+
+top_labels <- c('Strongly<br>agree', 'Agree', 'Neither<br>Agree<br>nor Disagree', 'Disagree', 'Strongly<br>disagree', 'Dont<br>Know or<br>Not<br>Applicable')
+
+fig <- plot_ly(df, x = ~x1, y = ~y, type = 'bar', orientation = 'h',  width = 1000, height = 450,
+        marker = list(color = 'rgba(38, 24, 74, 0.8)',
+                      line = list(color = 'rgb(248, 248, 249)', width = 1)), name = 'Strongly Agree') 
+
+fig <- fig %>% add_trace(x = ~x2, marker = list(color = 'rgba(71, 58, 131, 0.8)'), name = 'Agree') 
+fig <- fig %>% add_trace(x = ~x3, marker = list(color = 'rgba(122, 120, 168, 0.8)'), name = 'Neither Agree nor Disagree') 
+fig <- fig %>% add_trace(x = ~x4, marker = list(color = 'rgba(164, 163, 204, 0.85)'), name = 'Disagree') 
+fig <- fig %>% add_trace(x = ~x5, marker = list(color = 'rgba(190, 192, 213, 1)'), name = 'Strongly Disagree') 
+fig <- fig %>% add_trace(x = ~x6, marker = list(color = 'rgba(232, 232, 232, 1)'), name = 'Dont Know/Not Applicable') 
+fig <- fig %>% layout(legend = list(x = 100, y = 0.5))
+fig <- fig %>% layout(xaxis = list(title = "",
+                      showgrid = FALSE,
+                      showline = FALSE,
+                      showticklabels = FALSE,
+                      zeroline = FALSE,
+                      domain = c(0.15, 1)),
+         yaxis = list(title = "",
+                      showgrid = FALSE,
+                      showline = FALSE,
+                      showticklabels = FALSE,
+                      zeroline = FALSE),
+         barmode = 'stack',
+         paper_bgcolor = 'white', plot_bgcolor = 'rgb(248, 248, 255)',
+         margin = list(l = 120, r = 10, t = 25, b = 25),
+         showlegend = TRUE) 
+
+  # labeling the y-axis
+fig <- fig %>% add_annotations(xref = 'paper', yref = 'y', x = 0.14, y = y,
+                  xanchor = 'right',
+                  text = y,
+                  font = list(family = 'Arial', size = 9,
+                            color = 'rgb(67, 67, 67)'),
+                  showarrow = FALSE, align = 'right') 
+
+if (x1 > 0){
+fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
+                  x = x1 / 2, y = y,
+                  text = paste(df[,"x1"], '%'),
+                  font = list(family = 'Arial', size = 10,
+                  color = 'rgb(248, 248, 255)'),
+                  showarrow = FALSE)
+}
+
+
+if (x2 > 0){
+fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
+                x = x1 + x2 / 2, y = y,
+                 text = paste(df[,"x2"], '%'),
+                font = list(family = 'Arial', size = 10,
+                              color = 'rgb(248, 248, 255)'),
+                showarrow = FALSE)
+}
+
+if (x3 > 0){
+fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
+          x = x1 + x2 + x3 / 2, y = y,
+          text = paste(df[,"x3"], '%'),
+                  font = list(family = 'Arial', size =10,
+                              color = 'rgb(248, 248, 255)'),
+                  showarrow = FALSE)
+}
+
+if (x4 > 0){
+fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
+                   x = x1 + x2 + x3 + x4 / 2, y = y,
+                  text = paste(df[,"x4"], '%'),
+                  font = list(family = 'Arial', size = 10,
+                              color = 'rgb(248, 248, 255)'),
+                  showarrow = FALSE)
+}
+
+if (x5 > 0){
+fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
+                  x = x1 + x2 + x3 + x4 + x5 / 2, y = y,
+                  text = paste(df[,"x5"], '%'),
+                  font = list(family = 'Arial', size = 10,
+                              color = 'rgb(248, 248, 255)'),
+                  showarrow = FALSE)
+}
+
+if (x6 > 0){
+fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
+                  x = x1 + x2 + x3 + x4 + x5 + x6 / 2, y = y,
+                  text = paste(df[,"x6"], '%'),
+                  font = list(family = 'Arial', size = 10,
+                              color = 'rgb(0, 0, 0)'),
+                  showarrow = FALSE)
+}
+
+fig
+```
+
+
+
+
+### Firm Wide Survey Answers Weighted by Race
+
+
+```{r firm-race, echo = FALSE, message = FALSE, warnings = FALSE}
+
+# Filter by White
+Q_data <- filter(data, What.is.your.racial.or.ethnic.identity. == "African American or Black")
+Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+Q_data <- as.data.frame(Q_data) 
+Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+Q_data <- as.data.frame(Q_data) 
+Q_data <- Q_data %>%  #start with the data frame
+  map_df(table) %>%  # use map_df from the purrr package to "table" each column
+  rownames_to_column("response") %>% #convert the rownames to a column named response
+  select(response, everything(), -response)
+cols <- c(`Strongly Agree` = NA_real_, Agree = NA_real_, `Neither Agree nor Disagree` = NA_real_, Disagree = NA_real_, `Strongly Disagree` = NA_real_, `Don't Know/Not Applicable` = NA_real_)
+
+Q_data <- add_column(Q_data, !!!cols[setdiff(names(cols), names(Q_data))])
+Q_data <- as.data.frame(Q_data) 
+Q_data <- Q_data %>% replace(is.na(.), 0)
+if (ncol(Q_data) == 7){
+  Q_data$`Don't Know/Not Applicable` <- Q_data$`Don't Know/Not Applicable` + Q_data$`Don't Know / Not Applicable`
+}
+
+
+y <- c('I see strong executive leadership<br>support of diversity and inclusion.', 
+       'Our firm is committed to diversity and inclusion.',
+       'This firm provides an environment for the free and<br>open expression of ideas, opinions and beliefs.', 
+       'Management demonstrates a commitment to<br>meeting the needs of employees with disabilities', 
+       'People of all cultures and backgrounds are respected<br>and valued here. Employees of different backgrounds<br>interact well within our firm.',
+       'Racial, ethnic, and gender-based jokes<br>arent tolerated at this firm.', 
+       'I feel that who I am does not impact my<br>compensation, promotions, or job performance.',
+       'My supervisor demonstrates commitment<br>to and support of diversity.',
+       'In my department, I can be successful<br>as my authentic self.',
+       'When I speak up at work, my opinion is valued.',
+       'I rarely feel like I am singled out.',
+       'I feel like my colleagues understand who I really am.',
+       'I often worry I do not have things in common<br>with others in my department.'
+)
+
+
+x1 <- as.vector(Q_data$`Strongly Agree`)
+x2 <- as.vector(Q_data$Agree)
+x3 <- as.vector(Q_data$`Neither Agree nor Disagree`)
+x4 <- as.vector(Q_data$Disagree)
+x5 <- as.vector(Q_data$`Strongly Disagree`)
+x6 <- as.vector(Q_data$`Don't Know/Not Applicable`)
+
+df <- data.frame(y, x1, x2, x3, x4, x5, x6)
+
+df$total <- df$x1 + df$x2 + df$x3 + df$x4 + df$x5 + df$x6
+
+df$x1 <- round(((df$x1/df$total)*100), digits = 1)
+df$x2 <- round(((df$x2/df$total)*100), digits = 1)
+df$x3 <- round(((df$x3/df$total)*100), digits = 1)
+df$x4 <- round(((df$x4/df$total)*100), digits = 1)
+df$x5 <- round(((df$x5/df$total)*100), digits = 1)
+df$x6 <- round(((df$x6/df$total)*100), digits = 1)
+
+x1 <- df$x1
+x2 <- df$x2
+x3 <- df$x3
+x4 <- df$x4
+x5 <- df$x5
+x6 <- df$x6
+
+# Filter byAfrican American
+Q_data <- filter(data, What.is.your.racial.or.ethnic.identity. == "African American or Black")
+Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+Q_data <- as.data.frame(Q_data) 
+Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+Q_data <- as.data.frame(Q_data) 
+
+Q_data <- Q_data %>%  #start with the data frame
+  map_df(table) %>%  # use map_df from the purrr package to "table" each column
+  rownames_to_column("response") %>% #convert the rownames to a column named response
+  select(response, everything(), -response)
+
+
+cols <- c(`Strongly Agree` = NA_real_, Agree = NA_real_, `Neither Agree nor Disagree` = NA_real_, Disagree = NA_real_, `Strongly Disagree` = NA_real_, `Don't Know/Not Applicable` = NA_real_)
+
+Q_data <- add_column(Q_data, !!!cols[setdiff(names(cols), names(Q_data))])
+
+Q_data <- as.data.frame(Q_data) 
+Q_data <- Q_data %>% replace(is.na(.), 0)
+
+if (ncol(Q_data) == 7){
+  Q_data$`Don't Know/Not Applicable` <- Q_data$`Don't Know/Not Applicable` + Q_data$`Don't Know / Not Applicable`
+}
+
+x11 <- as.vector(Q_data$`Strongly Agree`)
+x12 <- as.vector(Q_data$Agree)
+x13 <- as.vector(Q_data$`Neither Agree nor Disagree`)
+x14 <- as.vector(Q_data$Disagree)
+x15 <- as.vector(Q_data$`Strongly Disagree`)
+x16 <- as.vector(Q_data$`Don't Know/Not Applicable`)
+
+df1 <- data.frame(y, x11, x12, x13, x14, x15, x16)
+
+df1$total <- df1$x11 + df1$x12 + df1$x13 + df1$x14 + df1$x15 + df1$x16
+
+df1$x11 <- round(((df1$x11/df1$total)*100), digits = 1)
+df1$x12 <- round(((df1$x12/df1$total)*100), digits = 1)
+df1$x13 <- round(((df1$x13/df1$total)*100), digits = 1)
+df1$x14 <- round(((df1$x14/df1$total)*100), digits = 1)
+df1$x15 <- round(((df1$x15/df1$total)*100), digits = 1)
+df1$x16 <- round(((df1$x16/df1$total)*100), digits = 1)
+
+x11 <- df1$x11
+x12 <- df1$x12
+x13 <- df1$x13
+x14 <- df1$x14
+x15 <- df1$x15
+x16 <- df1$x16
+
+# Filter by East Asian
+Q_data <- filter(data, What.is.your.racial.or.ethnic.identity. == "East Asian")
+Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+Q_data <- as.data.frame(Q_data) 
+Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+Q_data <- as.data.frame(Q_data) 
+
+Q_data <- Q_data %>%  #start with the data frame
+  map_df(table) %>%  # use map_df from the purrr package to "table" each column
+  rownames_to_column("response") %>% #convert the rownames to a column named response
+  select(response, everything(), -response)
+
+
+cols <- c(`Strongly Agree` = NA_real_, Agree = NA_real_, `Neither Agree nor Disagree` = NA_real_, Disagree = NA_real_, `Strongly Disagree` = NA_real_, `Don't Know/Not Applicable` = NA_real_)
+
+Q_data <- add_column(Q_data, !!!cols[setdiff(names(cols), names(Q_data))])
+
+Q_data <- as.data.frame(Q_data) 
+Q_data <- Q_data %>% replace(is.na(.), 0)
+
+if (ncol(Q_data) == 7){
+  Q_data$`Don't Know/Not Applicable` <- Q_data$`Don't Know/Not Applicable` + Q_data$`Don't Know / Not Applicable`
+}
+
+x21 <- as.vector(Q_data$`Strongly Agree`)
+x22 <- as.vector(Q_data$Agree)
+x23 <- as.vector(Q_data$`Neither Agree nor Disagree`)
+x24 <- as.vector(Q_data$Disagree)
+x25 <- as.vector(Q_data$`Strongly Disagree`)
+x26 <- as.vector(Q_data$`Don't Know/Not Applicable`)
+
+df2 <- data.frame(y, x21, x22, x23, x24, x25, x26)
+
+df2$total <- df2$x21 + df2$x22 + df2$x23 + df2$x24 + df2$x25 + df2$x26
+
+df2$x21 <- round(((df2$x21/df2$total)*100), digits = 1)
+df2$x22 <- round(((df2$x22/df2$total)*100), digits = 1)
+df2$x23 <- round(((df2$x23/df2$total)*100), digits = 1)
+df2$x24 <- round(((df2$x24/df2$total)*100), digits = 1)
+df2$x25 <- round(((df2$x25/df2$total)*100), digits = 1)
+df2$x26 <- round(((df2$x26/df2$total)*100), digits = 1)
+
+x21 <- df2$x21
+x22 <- df2$x22
+x23 <- df2$x23
+x24 <- df2$x24
+x25 <- df2$x25
+x26 <- df2$x26
+
+
+
+
+
+# Filter by South Asian
+Q_data <- filter(data, What.is.your.racial.or.ethnic.identity. == "South Asian")
+Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+Q_data <- as.data.frame(Q_data) 
+Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+Q_data <- as.data.frame(Q_data) 
+
+Q_data <- Q_data %>%  #start with the data frame
+  map_df(table) %>%  # use map_df from the purrr package to "table" each column
+  rownames_to_column("response") %>% #convert the rownames to a column named response
+  select(response, everything(), -response)
+cols <- c(`Strongly Agree` = NA_real_, Agree = NA_real_, `Neither Agree nor Disagree` = NA_real_, Disagree = NA_real_, `Strongly Disagree` = NA_real_, `Don't Know/Not Applicable` = NA_real_)
+
+Q_data <- add_column(Q_data, !!!cols[setdiff(names(cols), names(Q_data))])
+Q_data <- as.data.frame(Q_data) 
+Q_data <- Q_data %>% replace(is.na(.), 0)
+if (ncol(Q_data) == 7){
+  Q_data$`Don't Know/Not Applicable` <- Q_data$`Don't Know/Not Applicable` + Q_data$`Don't Know / Not Applicable`
+}
+
+x31 <- as.vector(Q_data$`Strongly Agree`)
+x32 <- as.vector(Q_data$Agree)
+x33 <- as.vector(Q_data$`Neither Agree nor Disagree`)
+x34 <- as.vector(Q_data$Disagree)
+x35 <- as.vector(Q_data$`Strongly Disagree`)
+x36 <- as.vector(Q_data$`Don't Know/Not Applicable`)
+
+df3 <- data.frame(y, x31, x32, x33, x34, x35, x36)
+
+df3$total <- df3$x31 + df3$x32 + df3$x33 + df3$x34 + df3$x35 + df3$x36
+
+df3$x31 <- round(((df3$x31/df3$total)*100), digits = 1)
+df3$x32 <- round(((df3$x32/df3$total)*100), digits = 1)
+df3$x33 <- round(((df3$x33/df3$total)*100), digits = 1)
+df3$x34 <- round(((df3$x34/df3$total)*100), digits = 1)
+df3$x35 <- round(((df3$x35/df3$total)*100), digits = 1)
+df3$x36 <- round(((df3$x36/df3$total)*100), digits = 1)
+
+x31 <- df3$x31
+x32 <- df3$x32
+x33 <- df3$x33
+x34 <- df3$x34
+x35 <- df3$x35
+x36 <- df3$x36
+
+# Filter by Hispanic
+Q_data <- filter(data, What.is.your.racial.or.ethnic.identity. == "Hispanic or Latinx")
+Q_data <- Q_data[c('Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8','Q9', 'Q10', 'Q11', 'Q12', 'Q13')]
+Q_data <- as.data.frame(Q_data) 
+Q_data <- Q_data %>% replace(is.na(.), "Don't Know/Not Applicable")
+Q_data <- as.data.frame(Q_data) 
+Q_data <- Q_data %>%  #start with the data frame
+  map_df(table) %>%  # use map_df from the purrr package to "table" each column
+  rownames_to_column("response") %>% #convert the rownames to a column named response
+  select(response, everything(), -response)
+cols <- c(`Strongly Agree` = NA_real_, Agree = NA_real_, `Neither Agree nor Disagree` = NA_real_, Disagree = NA_real_, `Strongly Disagree` = NA_real_, `Don't Know/Not Applicable` = NA_real_)
+Q_data <- add_column(Q_data, !!!cols[setdiff(names(cols), names(Q_data))])
+Q_data <- as.data.frame(Q_data) 
+Q_data <- Q_data %>% replace(is.na(.), 0)
+if (ncol(Q_data) == 7){
+  Q_data$`Don't Know/Not Applicable` <- Q_data$`Don't Know/Not Applicable` + Q_data$`Don't Know / Not Applicable`
+}
+
+x41 <- as.vector(Q_data$`Strongly Agree`)
+x42 <- as.vector(Q_data$Agree)
+x43 <- as.vector(Q_data$`Neither Agree nor Disagree`)
+x44 <- as.vector(Q_data$Disagree)
+x45 <- as.vector(Q_data$`Strongly Disagree`)
+x46 <- as.vector(Q_data$`Don't Know/Not Applicable`)
+
+df4 <- data.frame(y, x41, x42, x43, x44, x45, x46)
+
+df4$total <- df4$x41 + df4$x42 + df4$x43 + df4$x44 + df4$x45 + df4$x46
+
+df4$x41 <- round(((df4$x41/df4$total)*100), digits = 1)
+df4$x42 <- round(((df4$x42/df4$total)*100), digits = 1)
+df4$x43 <- round(((df4$x43/df4$total)*100), digits = 1)
+df4$x44 <- round(((df4$x44/df4$total)*100), digits = 1)
+df4$x45 <- round(((df4$x45/df4$total)*100), digits = 1)
+df4$x46 <- round(((df4$x46/df4$total)*100), digits = 1)
+
+x41 <- df4$x41
+x42 <- df4$x42
+x43 <- df4$x43
+x44 <- df4$x44
+x45 <- df4$x45
+x46 <- df4$x46
+
+
+
+
+
+
+
+
+
+
+
+# Add all race percentages and then divide by5 
+df$x1 <- (df$x1 + df1$x11 + df2$x21 + df3$x31 + df4$x41) / 5
+df$x2 <- (df$x2 + df1$x12 + df2$x22 + df3$x32 + df4$x42) / 5
+df$x3 <- (df$x1 + df1$x13 + df2$x23 + df3$x33 + df4$x43) / 5
+df$x4 <- (df$x1 + df1$x14 + df2$x24 + df3$x34 + df4$x44) / 5
+df$x5 <- (df$x1 + df1$x15 + df2$x25 + df3$x35 + df4$x45) / 5
+df$x6 <- (df$x1 + df1$x16 + df2$x26 + df3$x36 + df4$x46) / 5
+
+#x1 <- (x1 + x11 + x21 + x31 + x41) / 5
+#x2 <- (x2 + x12 + x22 + x32 + x42) / 5
+#x3 <- (x3 + x13 + x23 + x33 + x43) / 5
+#x4 <- (x4 + x14 + x24 + x34 + x44) / 5
+#x5 <- (x5 + x15 + x25 + x35 + x45) / 5
+#x6 <- (x6 + x16 + x26 + x36 + x46) / 5
+
+
+x1 <- (df$x1 + df1$x11 + df2$x21 + df3$x31 + df4$x41) / 5
+x2 <- (df$x2 + df1$x12 + df2$x22 + df3$x32 + df4$x42) / 5
+x3 <- (df$x1 + df1$x13 + df2$x23 + df3$x33 + df4$x43) / 5
+x4 <- (df$x1 + df1$x14 + df2$x24 + df3$x34 + df4$x44) / 5
+x5 <- (df$x1 + df1$x15 + df2$x25 + df3$x35 + df4$x45) / 5
+x6 <- (df$x1 + df1$x16 + df2$x26 + df3$x36 + df4$x46) / 5
+
+
+top_labels <- c('Strongly<br>agree', 'Agree', 'Neither<br>Agree<br>nor Disagree', 'Disagree', 'Strongly<br>disagree', 'Dont<br>Know or<br>Not<br>Applicable')
+
+fig <- plot_ly(df, x = ~x1, y = ~y, type = 'bar', orientation = 'h',  width = 1000, height = 450,
+        marker = list(color = 'rgba(38, 24, 74, 0.8)',
+                      line = list(color = 'rgb(248, 248, 249)', width = 1)), name = 'Strongly Agree') 
+
+fig <- fig %>% add_trace(x = ~x2, marker = list(color = 'rgba(71, 58, 131, 0.8)'), name = 'Agree') 
+fig <- fig %>% add_trace(x = ~x3, marker = list(color = 'rgba(122, 120, 168, 0.8)'), name = 'Neither Agree nor Disagree') 
+fig <- fig %>% add_trace(x = ~x4, marker = list(color = 'rgba(164, 163, 204, 0.85)'), name = 'Disagree') 
+fig <- fig %>% add_trace(x = ~x5, marker = list(color = 'rgba(190, 192, 213, 1)'), name = 'Strongly Disagree') 
+fig <- fig %>% add_trace(x = ~x6, marker = list(color = 'rgba(232, 232, 232, 1)'), name = 'Dont Know/Not Applicable') 
+fig <- fig %>% layout(legend = list(x = 100, y = 0.5))
+fig <- fig %>% layout(xaxis = list(title = "",
+                      showgrid = FALSE,
+                      showline = FALSE,
+                      showticklabels = FALSE,
+                      zeroline = FALSE,
+                      domain = c(0.15, 1)),
+         yaxis = list(title = "",
+                      showgrid = FALSE,
+                      showline = FALSE,
+                      showticklabels = FALSE,
+                      zeroline = FALSE),
+         barmode = 'stack',
+         paper_bgcolor = 'white', plot_bgcolor = 'rgb(248, 248, 255)',
+         margin = list(l = 120, r = 10, t = 25, b = 25),
+         showlegend = TRUE) 
+
+  # labeling the y-axis
+fig <- fig %>% add_annotations(xref = 'paper', yref = 'y', x = 0.14, y = y,
+                  xanchor = 'right',
+                  text = y,
+                  font = list(family = 'Arial', size = 9,
+                            color = 'rgb(67, 67, 67)'),
+                  showarrow = FALSE, align = 'right') 
+
+if (x1 > 0){
+fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
+                  x = x1 / 2, y = y,
+                  text = paste(df[,"x1"], '%'),
+                  font = list(family = 'Arial', size = 10,
+                  color = 'rgb(248, 248, 255)'),
+                  showarrow = FALSE)
+}
+
+
+if (x2 > 0){
+fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
+                x = x1 + x2 / 2, y = y,
+                 text = paste(df[,"x2"], '%'),
+                font = list(family = 'Arial', size = 10,
+                              color = 'rgb(248, 248, 255)'),
+                showarrow = FALSE)
+}
+
+if (x3 > 0){
+fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
+          x = x1 + x2 + x3 / 2, y = y,
+          text = paste(df[,"x3"], '%'),
+                  font = list(family = 'Arial', size =10,
+                              color = 'rgb(248, 248, 255)'),
+                  showarrow = FALSE)
+}
+
+if (x4 > 0){
+fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
+                   x = x1 + x2 + x3 + x4 / 2, y = y,
+                  text = paste(df[,"x4"], '%'),
+                  font = list(family = 'Arial', size = 10,
+                              color = 'rgb(248, 248, 255)'),
+                  showarrow = FALSE)
+}
+
+if (x5 > 0){
+fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
+                  x = x1 + x2 + x3 + x4 + x5 / 2, y = y,
+                  text = paste(df[,"x5"], '%'),
+                  font = list(family = 'Arial', size = 10,
+                              color = 'rgb(248, 248, 255)'),
+                  showarrow = FALSE)
+}
+
+if (x6 > 0){
+fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
+                  x = x1 + x2 + x3 + x4 + x5 + x6 / 2, y = y,
+                  text = paste(df[,"x6"], '%'),
+                  font = list(family = 'Arial', size = 10,
+                              color = 'rgb(0, 0, 0)'),
+                  showarrow = FALSE)
+}
+
+fig
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ### Survey Answers by Demographic Breaks
 
 ```{r genderA,  echo = FALSE, message = FALSE, warnings = FALSE}
