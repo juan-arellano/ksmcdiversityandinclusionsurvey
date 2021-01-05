@@ -230,6 +230,14 @@ df$x4 <- round(((df$x4/df$total)*100), digits = 1)
 df$x5 <- round(((df$x5/df$total)*100), digits = 1)
 df$x6 <- round(((df$x6/df$total)*100), digits = 1)
 
+x1 <- df$x1
+x2 <- df$x2
+x3 <- df$x3
+x4 <- df$x4
+x5 <- df$x5
+x6 <- df$x6
+
+
 top_labels <- c('Strongly<br>agree', 'Agree', 'Neither<br>Agree<br>nor Disagree', 'Disagree', 'Strongly<br>disagree', 'Dont<br>Know or<br>Not<br>Applicable')
 
 fig <- plot_ly(df, x = ~x1, y = ~y, type = 'bar', orientation = 'h',  width = 1000, height = 450,
@@ -266,58 +274,60 @@ fig <- fig %>% add_annotations(xref = 'paper', yref = 'y', x = 0.14, y = y,
                             color = 'rgb(67, 67, 67)'),
                   showarrow = FALSE, align = 'right') 
 
+if (x1 > 0){
 fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
-                  #ax = .75 * (x1), ay = y,
+                  x = x1 / 2, y = y,
                   text = paste(df[,"x1"], '%'),
-                  textposition = 'left',
-                  #xanchor = 'left',
-                  font = list(family = 'Arial', size = 12,
+                  font = list(family = 'Arial', size = 10,
                   color = 'rgb(248, 248, 255)'),
                   showarrow = FALSE)
+}
 
+
+if (x2 > 0){
 fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
-                #x = .75 * (x1 + (x2)), y = y,
-                textposition = 'center left',
-                #xanchor = 'center left',
+                x = x1 + x2 / 2, y = y,
                  text = paste(df[,"x2"], '%'),
-                font = list(family = 'Arial', size = 12,
+                font = list(family = 'Arial', size = 10,
                               color = 'rgb(248, 248, 255)'),
                 showarrow = FALSE)
+}
 
+if (x3 > 0){
 fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
-     #             x = .75 * (x1 + x2 + x3), y = y,
-      textposition = 'center ',
-     #xanchor = 'left',
-     text = paste(df[,"x3"], '%'),
-                  font = list(family = 'Arial', size =12,
+          x = x1 + x2 + x3 / 2, y = y,
+          text = paste(df[,"x3"], '%'),
+                  font = list(family = 'Arial', size =10,
                               color = 'rgb(248, 248, 255)'),
                   showarrow = FALSE)
+}
 
+if (x4 > 0){
 fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
-#                  x = .75 * (x1 + x2 + x3 + x4), y = y,
-textposition = 'center right',
-#xanchor = 'center right',
-text = paste(df[,"x4"], '%'),
-                  font = list(family = 'Arial', size = 12,
+                   x = x1 + x2 + x3 + x4 / 2, y = y,
+                  text = paste(df[,"x4"], '%'),
+                  font = list(family = 'Arial', size = 10,
                               color = 'rgb(248, 248, 255)'),
                   showarrow = FALSE)
+}
 
+if (x5 > 0){
 fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
-                  #x = .75 * (x1 + x2 + x3 + x4 + x5), y = y,
-                  textposition = 'center right',
-                  #xanchor = 'right',
+                  x = x1 + x2 + x3 + x4 + x5 / 2, y = y,
                   text = paste(df[,"x5"], '%'),
-                  font = list(family = 'Arial', size = 12,
+                  font = list(family = 'Arial', size = 10,
                               color = 'rgb(248, 248, 255)'),
                   showarrow = FALSE)
+}
 
+if (x6 > 0){
 fig <- fig %>% add_annotations(xref = 'x', yref = 'y',
-                  #x = .75 * (x1 + x2 + x3 + x4 + x5 + x6), y = y,
-                  textposition = 'right',
+                  x = x1 + x2 + x3 + x4 + x5 + x6 / 2, y = y,
                   text = paste(df[,"x6"], '%'),
-                  font = list(family = 'Arial', size = 12,
+                  font = list(family = 'Arial', size = 10,
                               color = 'rgb(248, 248, 255)'),
                   showarrow = FALSE)
+}
 
 fig
 #return(fig)
